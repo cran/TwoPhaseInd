@@ -1,0 +1,291 @@
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+%\VignetteIndexEntry{TwoPhaseInd}
+%\VignetteDepends{}
+%\VignetteKeywords{Documentation}
+%\VignettePackage{TwoPhaseInd}
+\documentclass[12pt]{article}
+
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+\newcommand{\R}{{\textsf{R}}}
+\newcommand{\code}[1]{{\texttt{#1}}}
+\newcommand{\term}[1]{{\emph{#1}}}
+\newcommand{\Rpackage}[1]{\textsf{#1}}
+\newcommand{\Rfunction}[1]{\texttt{#1}}
+\newcommand{\Robject}[1]{\texttt{#1}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\bibliographystyle{plainnat}
+
+\begin{document}
+
+\title{The \Rpackage{TwoPhaseInd} package: Semiparametric Estimation Exploiting Covariate Independence in Two-Phase Randomized Trials}
+\author{Ting-Yuan Liu and James Y. Dai}
+\maketitle
+
+\section{Introduction}
+
+The package \Rpackage{TwoPhaseInd} provides the functions to compute the semiparametric maximum likelihood estimate (SPMLE) and the maximum estimated likelihood estimator (MELE) defined in \cite{Dai2009}. In a two-phase sampling study for genetics or biomarkers, the treatment and the baseline biomakers or genotypes are independent by design. Exploiting the independence between a randomized treatment and the baseline markers yields substantial power gain in estimating their interactions, as shown by \cite{Dai2009}. The technical details can be found in \cite{Dai2009}. This manual provides brief description of the functions provided in the \Rpackage{TwoPhaseInd} package. 
+
+<<loadLibrary, echo=FALSE, results=hide>>=
+##testLib <- "/home/ting/proj/jdai/2phi/code/rlib" 
+##.libPaths(testLib)
+##install.packages("/home/ting/proj/jdai/2phi/pkg/TwoPhaseInd", repos=NULL)
+##library(TwoPhaseInd, lib.loc=testLib)
+##sessionInfo()
+
+library(TwoPhaseInd)
+@
+
+\section{WHI Biomarker Study}
+
+The data is originally published in \cite{Kooperberg2007} and used as an illustration example in \cite{Dai2009}.  
+Only partial data are provided in this package for demonstration purpose.
+
+<<whiBioMarker>>=
+data(whiBioMarker)
+## dim(whiBioMarker)
+ls()
+@ 
+
+\section{Semiparametric Maximum Likelihood Estimate (SPMLE)}
+
+Based on the profile likelihood, \cite{Dai2009} developed a Newton-Raphson algorithm to compute the semiparametric maximum likelihood estimate (SPMLE).  
+The function \Rfunction{spmle} can be used to perform this algorithm with or without exploiting independent. 
+In a two-phase sampling scheme, we record the response variable \Robject{stroke} and the treatment \Robject{hrtdisp} for everyone; The biomarker PAP (plasmin-antiplasmin complex), \Robject{papbl}, is only recorded in the second phase case-control sample. Several important clinical characteristics in the second-phase data are included to eliminate potential confounding. 
+The data is stored as \Robject{whiBioMarker}.
+
+\subsection{SPMLE Without Exploiting Independent}
+
+Here is an example of SPMLE without exploiting independent:
+
+<<spmleNonIndExtra>>=
+## debug(spmle)
+  spmleNonIndExtra <- spmle(data=whiBioMarker,			## dataset (data.frame)
+                          response="stroke",			## response variable (binary)
+                          treatment="hrtdisp",		## treatment variable (binary)
+                          BaselineMarker="papbl",		## environment variable (continuous)
+                          extra=c(
+                            "age" 		## age
+                            , "dias" 	## diastolic BP
+                            , "syst" 	## systolic BP
+                            , "diabtrt"	## diabetes 
+                            ),		## extra variable(s)
+                          phase="phase",			## variable for phase indicator
+                          ind=FALSE				## independent or non-indepentent
+                          )
+
+spmleNonIndExtra
+@ 
+
+\subsection{SPMLE With Exploiting Independent}
+
+Here is an example of SPMLE with exploiting independent:
+
+<<spmleIndExtra>>=
+spmleIndExtra <- spmle(data=whiBioMarker,			## dataset (data.frame)
+              response="stroke",			## response variable (binary)
+              treatment="hrtdisp",		## treatment variable (binary)
+              BaselineMarker="papbl",		## environment variable (continuous)
+              extra=c(
+                            "age" 		## age
+                            , "dias" 	## diastolic BP
+                            , "syst" 	## systolic BP
+                            , "diabtrt"	## diabetes 
+                ),		## extra variable(s)
+              phase="phase",			## variable for phase indicator
+              ind=TRUE				## independent or non-indepentent
+              )
+
+spmleIndExtra
+@ 
+
+\section{Maximum Estimated Likelihood Estimator (MELE)}
+
+The profile information matrix is computed explicitly via numerical differentiation. 
+In certain situations where computing the SPMLE is slow, we propose a maximum estimated likelihood estimator (MELE), which is also capable of incorporating the covariate independence. 
+\\
+
+The following examples use the same response, treatment, and biomarker as used in the SPMLE examples to illustrate the usage of MELE algorithm by the function \Rfunction{mele}. 
+
+
+\subsection{MELE Without Exploiting Independent}
+
+Here is an example of MELE without exploiting independent:
+
+<<melNonIndExtra>>=
+##debug(mele)
+melNonIndExtra <- mele(data=whiBioMarker,			## dataset (data.frame)
+              response="stroke",			## response variable (binary)
+              treatment="hrtdisp",		## treatment variable (binary)
+              BaselineMarker="papbl",		## environment variable (continuous)
+                          extra=c(
+                            "age" 		## age
+                            , "dias" 	## diastolic BP
+                            , "syst" 	## systolic BP
+                            , "diabtrt"	## diabetes 
+                            ),		## extra variable(s)
+              phase="phase",			## variable for phase indicator
+              ind=FALSE				## independent or non-indepentent
+              )
+melNonIndExtra
+@ 
+
+\subsection{MELE with Exploiting Independent}
+
+Here is an example of MELE with exploiting independent:
+
+<<melIndNoExtra>>=
+melIndExtra <- mele(data=whiBioMarker,			## dataset (data.frame)
+              response="stroke",			## response variable (binary)
+              treatment="hrtdisp",		## treatment variable (binary)
+              BaselineMarker="papbl",		## environment variable (continuous)
+                    extra=c(
+                            "age" 		## age
+                            , "dias" 	## diastolic BP
+                            , "syst" 	## systolic BP
+                            , "diabtrt"	## diabetes 
+                            ),		## extra variable(s)
+              phase="phase",			## variable for phase indicator
+              ind=TRUE				## independent or non-indepentent
+              )
+melIndExtra
+@ 
+
+Generally speaking, the estimators exploiting independence would yield smaller stander error; the SPMLE would be more efficient than the MELE. 
+%%<<spmleNonIndNoExtra>>=
+%%## debug(spmle)
+%%  spmleNonIndNoExtra <- spmle(data=whiBioMarker,			## dataset (data.frame)
+%%                          response="stroke",			## response variable (binary)
+%%                          treatment="hrtdisp",		## treatment variable (binary)
+%%                          BaselineMarker="papbl",		## environment variable (continuous)
+%%                          extra=NULL,
+%%                          phase="phase",			## variable for phase indicator
+%%                          ind=FALSE				## independent or non-indepentent
+%%                          )
+%%
+%%spmleNonIndNoExtra
+%%@ 
+%%
+%%Here is an example of SPMLE with exploiting independent, without confounding factors:
+%%
+%%<<spmleIndNoExtra>>=
+%%spmleIndNoExtra <- spmle(data=whiBioMarker,			## dataset (data.frame)
+%%              response="stroke",			## response variable (binary)
+%%              treatment="hrtdisp",		## treatment variable (binary)
+%%              BaselineMarker="papbl",		## environment variable (continuous)
+%%              extra=NULL,
+%%              phase="phase",			## variable for phase indicator
+%%              ind=TRUE				## independent or non-indepentent
+%%              )
+%%
+%%spmleIndNoExtra
+%%@ 
+%%
+%%
+%%
+%%Here is an example of MELE with exploiting independent (with confounding factors):
+%%
+%%<<melIndNoExtra>>=
+%%melIndNoExtra <- mele(data=whiBioMarker,			## dataset (data.frame)
+%%              response="stroke",			## response variable (binary)
+%%              treatment="hrtdisp",		## treatment variable (binary)
+%%              BaselineMarker="papbl",		## environment variable (continuous)
+%%              extra=NULL,
+%%              phase="phase",			## variable for phase indicator
+%%              ind=TRUE				## independent or non-indepentent
+%%              )
+%%melIndNoExtra
+%%@ 
+%%
+%%Here is an example of MELE without exploiting independent (with confounding factors):
+%%  
+%%<<melNoIndNoExtra>>=
+%%melNoIndNoExtra <- mele(data=whiBioMarker,			## dataset (data.frame)
+%%              response="stroke",			## response variable (binary)
+%%              treatment="hrtdisp",		## treatment variable (binary)
+%%              BaselineMarker="papbl",		## environment variable (continuous)
+%%              extra=NULL,
+%%              phase="phase",			## variable for phase indicator
+%%              ind=FALSE				## independent or non-indepentent
+%%              )
+%%melNoIndNoExtra
+%%@ 
+%%
+%%Here is an example of MELE with exploiting independent (with confounding factors):
+%%
+%%<<melIndExtra>>=
+%%##debug(mele)
+%%melIndExtra <- mele(data=whiBioMarker,			## dataset (data.frame)
+%%              response="stroke",			## response variable (binary)
+%%              treatment="hrtdisp",		## treatment variable (binary)
+%%              BaselineMarker="papbl",		## environment variable (continuous)
+%%              extra=c(
+%%                "age" 		## age
+%%                		## physical activity levels
+%%                , "dias" 	## diabetes
+%%                , "hyp" 		## hypertension
+%%                , "syst" 	## systolic
+%%                , "diabtrt"	## diastolic BP?  This one doesn't work for some reason 
+%%                , "lmsepi"
+%%                		## waist:hip ratio
+%%                ),		## extra variable(s)
+%%              phase="phase",			## variable for phase indicator
+%%              ind=TRUE				## independent or non-indepentent
+%%              )
+%%melIndExtra
+%%@ 
+%%
+%%Here is an example of MELE without exploiting independent (with confounding factors):
+%%  
+%%<<melNoIndExtra>>=
+%%melNoIndExtra <- mele(data=whiBioMarker,			## dataset (data.frame)
+%%              response="stroke",			## response variable (binary)
+%%              treatment="hrtdisp",		## treatment variable (binary)
+%%              BaselineMarker="papbl",		## environment variable (continuous)
+%%              extra=c(
+%%                "age" 		## age
+%%                		## physical activity levels
+%%                , "dias" 	## diabetes
+%%                , "hyp" 		## hypertension
+%%                , "syst" 	## systolic
+%%                , "diabtrt"	## diastolic BP?  This one doesn't work for some reason 
+%%                , "lmsepi"
+%%                		## waist:hip ratio
+%%                ),		## extra variable(s)
+%%              phase="phase",			## variable for phase indicator
+%%              ind=FALSE				## independent or non-indepentent
+%%              )
+%%melNoIndExtra
+%%@ 
+
+\section{Session Information}
+
+The version number of \R{} and packages loaded for generating the vignette were:
+
+\begin{verbatim}
+<<sessionInfo, echo=FALSE, results=tex>>=
+sessionInfo()
+@
+\end{verbatim}
+
+\bibliography{TwoPhaseInd}
+
+\end{document}
