@@ -4,11 +4,13 @@
 
 /********** function prototypes **********************/
  
-void profile_NR_noind(long *n_subject, long *subj_id,double *y,double *x,double *z,long *NXYcount,long *extracovar,double *covvec,long *n_extracov,double *beta,double *varmat,double *diff_factor,long *maxit,long *verbose);
+void profile_NR_noind(long *n_subject, long *subj_id,double *y,double *x,double *z,long *NXYcount,long *extracovar,double *covvec,long *n_extracov,double *beta,double *varmat,double *diff_factor,long *maxit,long *verbose,long *converge);
 
-void profile_NR_ind(long *n_subject, long *subj_id,double *y,double *x,double *z,long *NXYcount,long *extracovar,double *covvec,long *n_extracov,double *beta,double *varmat,double *diff_factor,long *maxit,long *verbose);
+void profile_NR_ind(long *n_subject, long *subj_id,double *y,double *x,double *z,long *NXYcount,long *extracovar,double *covvec,long *n_extracov,double *beta,double *varmat,double *diff_factor,long *maxit,long *verbose,long *converge);
 
-void dqrinv_(double *, long *, double *, double *);
+double *dqrinv(double *xvec, long n, double tol);
+void dqrdc2_(double *, long *, long *, long *, double *, long *, double *, long *, double *);
+void dqrcf_(double *, long *, long *, double *, double *, long *, double *, long *);
 
 double **double_vec_to_mat(double *Yvec, long nrow, long ncol);
 
