@@ -38,6 +38,10 @@ For each paramter, it returns:
 \item{pVal}{p value}
 }
 
+\references{
+J. Y. Dai, S. S. Li, and P. B. Gilbert. Case-only methods for competing risks models with application to assessing differential vaccine efficacy by viral and host genetics. Biometrics, 15(1):196-203, 2014.
+}
+
 \author{
 James Y. Dai
 }

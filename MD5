@@ -1,4 +1,4 @@
-0a3b81ccacb2b7fe0f4515d66c1684ab *DESCRIPTION
+4fffcd8604cd5ecdfc43a2ece9c13dc2 *DESCRIPTION
 76f7a08b68dd2c2ae6034b56ef4ff1a3 *NAMESPACE
 ce6b4e0485723281b4130c8e76c730e3 *R/aco1arm.R
 d2120826c14f4c6a62739ca141abab92 *R/aco2arm.R
@@ -15,14 +15,14 @@ c3c5a67b00619761f81312dd9af13b74 *R/spmle.R
 74d3a56c491b8c227866ef15f5ef2e7a *build/vignette.rds
 ca857880102e3f755f24718dcd5277ae *data/acodata.rda
 4c6eda457256c6157b9796613f8aa4aa *data/whiBioMarker.rda
-de8caa58d9daf16ef73819870ee4929c *inst/doc/TwoPhaseInd.R
-1c7d602269f669dd10892e86bc07ba41 *inst/doc/TwoPhaseInd.Rnw
-96f89378aeabc07b8969b5aa3a4a7444 *inst/doc/TwoPhaseInd.pdf
-10d3223ff55c0573dd735ce8b655c2c3 *man/aco1arm.Rd
-1d534b43a5b9d3296223b8de785c4efd *man/aco2arm.Rd
-8180b7b017d9619a76c4dde803584d9a *man/acoarm.Rd
-4f9caf97c7e48c4650a4a1d18e40a5ba *man/acodata.Rd
-f09061992671cb45050c53d9978dd8ab *man/caseonly.Rd
+9c194dd4ce7f5987b0983d59fb7d85d1 *inst/doc/TwoPhaseInd.R
+c73358dc1c53eba7d24af0152b45fab7 *inst/doc/TwoPhaseInd.Rnw
+d60a318341fabc7f73954f8bb6b82816 *inst/doc/TwoPhaseInd.pdf
+3b69a8d0ac00274622e476dd64689fec *man/aco1arm.Rd
+6f5ad0ac15bebeff80694dde55d09447 *man/aco2arm.Rd
+d4e88625359ba1a3a7ad429293f7ce3b *man/acoarm.Rd
+6318931f843a1049783780e1b8edb346 *man/acodata.Rd
+8ac8e5f73ba797e783cc1eafdbf274a3 *man/caseonly.Rd
 cf95473b404d161b79b9d60a9104237e *man/char2num.Rd
 897702719cc4606758159fe8f85c649b *man/mele.Rd
 c77d904720e0d484fa533d0e02defc8f *man/remove_missingdata.Rd
@@ -31,5 +31,6 @@ a46d45e7f03fecc5f5dba53d36d148f2 *man/spmle.Rd
 09d7592e4db51e992fdefa97e5acb141 *man/whiBioMarker.Rd
 06ddaabbf176632400488eeca28dd6e1 *src/profile_NR.c
 0f3359d68833071cce04a0ec656a2c1b *src/profile_NR.h
-1c7d602269f669dd10892e86bc07ba41 *vignettes/TwoPhaseInd.Rnw
-15b5bfb02e070a260645c7ab24cb4d5a *vignettes/TwoPhaseInd.bib
+c73358dc1c53eba7d24af0152b45fab7 *vignettes/TwoPhaseInd.Rnw
+e1675deddc534c52510f92d78a9217c5 *vignettes/TwoPhaseInd.bib
+19320a334e052d0d5583a347f5365462 *vignettes/figure1new.png

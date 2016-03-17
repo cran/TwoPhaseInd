@@ -1,7 +1,7 @@
 Package: TwoPhaseInd
 Type: Package
-Title: Two-Phase Independence
-Version: 1.1.0
+Title: Estimate Gene-Treatment Interaction Exploiting Randomization
+Version: 1.1.1
 Authors@R: c(person("James", "Dai", role = c("aut", "cre"),
 		     email = "jdai@fredhutch.org"),
 	      person("Xiaoyu", "Wang", role = c("aut")))
@@ -11,8 +11,8 @@ Maintainer: James Dai <jdai@fredhutch.org>
 Description: Estimation of gene-treatment interactions in randomized clinical trials exploiting gene-treatment independence.
 License: GPL (>= 2)
 LazyLoad: no
-Packaged: 2016-01-28 01:33:51 UTC; Administrator
+Packaged: 2016-03-17 19:13:59 UTC; Administrator
 NeedsCompilation: yes
 Imports: survival
 Repository: CRAN
-Date/Publication: 2016-01-29 07:10:00
+Date/Publication: 2016-03-17 23:13:20

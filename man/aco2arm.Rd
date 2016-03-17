@@ -52,7 +52,7 @@ The function returns estimates of the proportional hazards model, and variance o
 \item{pVal}{p value}
 }
 \references{
-J. Y. Dai, XC Zhang,CY Wang, and C. Kooperberg. Augmented Case-Only Designs for Randomized Clinical Trials with Failure Time Endpoints. Biometrics, DOI: 10.1111/biom.12392, 2015.
+J. Y. Dai, X. C. Zhang,C. Y. Wang, and C. Kooperberg. Augmented case-only designs for randomized clinical trials with failure time endpoints. Biometrics, DOI: 10.1111/biom.12392, 2016.
 }
 \author{
 James Y. Dai
