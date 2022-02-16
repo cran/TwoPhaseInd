@@ -270,10 +270,10 @@ mele <- function(data,			## dataset (data.frame)
     
     wgt0 <- ifelse(y==1,N1/n1,N0/n0) 
     ##sfit <- glm(y~x+z + x*z+ covar$age + factor(covar$lmsepi) + factor(covar$diabtrt) + factor(covar$hyp) + covar$syst+covar$dias, family=binomial,weights=wgt0)
-    options(warn=-1) #remvove message:non-integer #successes in a binomial glm! 
-    sfit <- glm(y~., data=glmData, family=binomial, weights=wgt0)
+    #*options(warn=-1) #remvove message:non-integer #successes in a binomial glm! 
+    suppressWarnings(sfit <- glm(y~., data=glmData, family=binomial, weights=wgt0))
     betastart <- sfit$coef   
-    options(warn=0)
+    #*options(warn=0)
     
     diff <- 1
     tol <- 1e-7

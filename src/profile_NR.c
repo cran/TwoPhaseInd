@@ -7,6 +7,8 @@
 # include <math.h>
 # include <string.h>
 # include <R.h>
+# include <R_ext/Error.h>
+# include <R_ext/RS.h>
 # include <Rmath.h>
 # include <R_ext/Lapack.h>
 # include <R_ext/BLAS.h>
@@ -48,8 +50,8 @@ void profile_NR_noind(
 
   double *zx0, *zx1, *z1, *x1,*pyx, *y1, **X1, **X, *pzx, *pzxdiffvec, *pyxnew,*pzxnew,*fit,*fit1,*tt,eta,*err1,*err, **infmat,**ss, *infmatvec,**infmatinv,pzxsum1, pzxsum0, *wgt1, *score, *betanew, *betavec,diff, dif,a,b,c,d,change,epsilon;
   long i,j,k,l,*Nyx, nx0, nx1, n_cov, n11=0, n00=0, n01=0, n10=0, count1=0, count2=0,count,it, itt;
-  FILE *file; 
-  file = fopen("debug.txt", "w"); 
+  //FILE *file; 
+  //file = fopen("debug.txt", "w"); 
   *verbose=2;
   *converged=0;
   epsilon =pow(10,-8);
@@ -131,7 +133,7 @@ void profile_NR_noind(
     }
   }
 
-    if (*verbose==1) { 
+ /*   if (*verbose==1) { 
        print_vector_double(z1,*n_subject*2,file);
        print_vector_double(x1,*n_subject*2,file);
        print_vector_double(y1,*n_subject*2,file);
@@ -141,7 +143,7 @@ void profile_NR_noind(
  if (*verbose==1) fprintf(file,"\nn10=%i\n\n", n10); 
  if (*verbose==1) fprintf(file,"\nn01=%i\n\n", n01); 
  if (*verbose==1) fprintf(file,"\nn00=%i\n\n", n00);
- 
+ */
   count=0;
   for (i=0;i<*n_subject*2;i++) { 
     if ((x1[i]==0.0) & (y1[i]==0.0)) {
@@ -181,11 +183,11 @@ void profile_NR_noind(
 
   }
 
-   if (*verbose==1) { 
+/*   if (*verbose==1) { 
        print_vector_long(Nyx,*n_subject*2,file);
        print_vector_double(pyx,*n_subject*2,file);
      }
-
+*/
 
 
   count=0; 
@@ -203,12 +205,12 @@ void profile_NR_noind(
     }
   }
 
-
+/*
      if (*verbose==1) { 
        print_matrix_double(X1,*n_subject*2,n_cov,file);
        print_matrix_double(X,*n_subject,n_cov,file);
      }
- 
+*/ 
 
    double cutoff1 = pow(10,-6);
    double cutoff2 = pow(10,-11);
@@ -265,14 +267,14 @@ void profile_NR_noind(
       }
 
 
-      if (*verbose==1) print_vector_double(pzx,*n_subject*2,file); 
+//      if (*verbose==1) print_vector_double(pzx,*n_subject*2,file); 
   
       it=0;
       dif=1;
 
       while (dif>cutoff2 && it < *maxit) {
 	    it++;
-        if (*verbose==1)   fprintf(file,"\nthe EM iteration number =%i\n\n", it);
+//        if (*verbose==1)   fprintf(file,"\nthe EM iteration number =%i\n\n", it);
         for (i=0;i<*n_subject*3;i++) {
 	      if (i<*n_subject) wgt1[i]=1.0; 
           else  wgt1[i]=Nyx[i-*n_subject]*fit1[i-*n_subject]*pzx[i-*n_subject]/pyx[i-*n_subject];
@@ -311,8 +313,8 @@ void profile_NR_noind(
         }
 
 
-        if (*verbose==1) print_vector_double(pzx,*n_subject*2,file); 
-        if (*verbose==1) print_vector_double(pyx,*n_subject*2,file); 
+//        if (*verbose==1) print_vector_double(pzx,*n_subject*2,file); 
+//        if (*verbose==1) print_vector_double(pyx,*n_subject*2,file); 
         
         for (i=0;i<*n_subject*2;i++) {
 	      pzxdiffvec[i]=fabs(pzx[i]-pzxnew[i]);
@@ -320,7 +322,7 @@ void profile_NR_noind(
           else if (dif<pzxdiffvec[i]) dif=pzxdiffvec[i];
           pzx[i]=pzxnew[i];
         }
-        if (*verbose==1) print_vector_double(pzxdiffvec,*n_subject*2,file);
+//        if (*verbose==1) print_vector_double(pzxdiffvec,*n_subject*2,file);
         //if (it % 10 ==0) fprintf(file,"\n%d: dif1= %.10e",it,dif);
       }
 
@@ -336,8 +338,8 @@ void profile_NR_noind(
         }
       }
 
-      if (*verbose==1) print_vector_double(wgt1,*n_subject*3,file);
-      if (*verbose==1) print_vector_double(score,n_cov,file);
+//      if (*verbose==1) print_vector_double(wgt1,*n_subject*3,file);
+//      if (*verbose==1) print_vector_double(score,n_cov,file);
 
       /* now start numerical differentiation */
 
@@ -392,7 +394,7 @@ void profile_NR_noind(
            
           while (dif> cutoff2 && it < *maxit) {
 	        it++;
-            if (*verbose==1) fprintf(file,"\nthe EM iteration number =%i\n\n", it);
+//            if (*verbose==1) fprintf(file,"\nthe EM iteration number =%i\n\n", it);
             for (k=0;k<*n_subject*3;k++) {
 	           if (k<*n_subject) wgt1[k]=1; 
                else  wgt1[k]=Nyx[k-*n_subject]*fit1[k-*n_subject]*pzx[k-*n_subject]/pyxnew[k-*n_subject];
@@ -434,8 +436,8 @@ void profile_NR_noind(
           }
 
 
-          if (*verbose==1) print_vector_double(pyxnew,*n_subject*2,file);
-          if (*verbose==1) print_vector_double(pzx,*n_subject*2,file);
+//          if (*verbose==1) print_vector_double(pyxnew,*n_subject*2,file);
+//          if (*verbose==1) print_vector_double(pzx,*n_subject*2,file);
 
           for (k=0;k<*n_subject*3;k++) {
 	        if (k<*n_subject) {
@@ -446,17 +448,17 @@ void profile_NR_noind(
                   for (l=0;l<n_cov;l++) ss[j][l]+= X1[k-*n_subject][l]*wgt1[k]*err1[k-*n_subject]; 
              }
           }
-          if (*verbose==1) print_vector_double(wgt1,*n_subject*3,file);
+//          if (*verbose==1) print_vector_double(wgt1,*n_subject*3,file);
 	
       
 
 	   }	
-       if (*verbose==1) print_matrix_double(ss,2,n_cov,file);
+//       if (*verbose==1) print_matrix_double(ss,2,n_cov,file);
        for (j=0;j<n_cov;j++) infmat[i][j] = (ss[0][j]-ss[1][j])/(2*(*diff_factor));
         
        }
-       if (*verbose==1)  {
-	     print_matrix_double(infmat,n_cov,n_cov,file); }
+//       if (*verbose==1)  {
+//	     print_matrix_double(infmat,n_cov,n_cov,file); }
       /* now update beta */
  
       count=0; 
@@ -509,7 +511,7 @@ for (i=0;i<n_cov*n_cov;i++){
 		varmat[i]=varmat1[i];
 	}
 	
-   fclose(file);
+//   fclose(file);
 
 
 }
@@ -554,8 +556,8 @@ void profile_NR_ind(
   double *z1, *pyx, *y1, *x1, *pz, *pznew,*pzdiffvec, *pyxnew, **infmat, **ss, *fit,*fit1, *tt, **X1, **X, pzsum, *wgt1, *score, *betanew, *betavec, *err1,*err,*infmatvec,**infmatinv;
   double diff,eta, change,dif,a,b,c,d,epsilon;
   long i,j,k,l,N,n_cov,count,*Nyx, n11=0, n00=0, n01=0, n10=0,itt,it;
-  FILE *file; 
-  file = fopen("debug.txt", "w"); 
+//  FILE *file; 
+//  file = fopen("debug.txt", "w"); 
   *converged=0;
   epsilon =pow(10,-8);
   z1=double_vec(*n_subject*4); 
@@ -673,7 +675,7 @@ void profile_NR_ind(
     }
   }
 
- if (*verbose==1) { 
+/* if (*verbose==1) { 
        print_vector_long(Nyx,*n_subject*4,file);
        print_vector_double(pyx,*n_subject*4,file);
      }
@@ -681,7 +683,7 @@ void profile_NR_ind(
     
      if (*verbose==1)   print_matrix_double(X1,*n_subject*4,n_cov,file);
      if (*verbose==1)   print_matrix_double(X,*n_subject,n_cov,file);
-     
+*/     
  
 
      N=0;
@@ -730,13 +732,13 @@ void profile_NR_ind(
 	pz[i]= pz[i]*4/pzsum;  
       }
 
-        if (*verbose==1) print_vector_double(pz,*n_subject*4,file);
+//        if (*verbose==1) print_vector_double(pz,*n_subject*4,file);
      
       it=0;
       dif=1;
       while (dif>cutoff2 && it < *maxit) {
 	it++;
-         if (*verbose==1) fprintf(file,"\nthe EM iteration number =%i\n\n", it);
+//         if (*verbose==1) fprintf(file,"\nthe EM iteration number =%i\n\n", it);
         for (i=0;i<*n_subject*5;i++) {
 	  if (i<*n_subject) wgt1[i]=1; 
           else  wgt1[i]=Nyx[i-*n_subject]*fit1[i-*n_subject]*pz[i-*n_subject]/pyx[i-*n_subject];
@@ -765,7 +767,7 @@ void profile_NR_ind(
           if ((x1[i]==0) & (y1[i]==1)) c += fit1[i]*pznew[i];
           if ((x1[i]==1) & (y1[i]==1)) d += fit1[i]*pznew[i];
         }
-        if (*verbose==1) print_vector_double(pznew,*n_subject*4,file);
+//        if (*verbose==1) print_vector_double(pznew,*n_subject*4,file);
         for (i=0;i<*n_subject*4;i++) {
           if ((x1[i]==0) & (y1[i]==0)) pyx[i]= a; 
           if ((x1[i]==1) & (y1[i]==0)) pyx[i]= b; 
@@ -783,7 +785,7 @@ void profile_NR_ind(
       }
 
 
-      if (*verbose==1) print_vector_double(pz,*n_subject*4,file);
+//      if (*verbose==1) print_vector_double(pz,*n_subject*4,file);
 
       for   (j=0;j<n_cov;j++) score[j]=0.0;     
 
@@ -797,7 +799,7 @@ void profile_NR_ind(
         }
       }
 
-      if (*verbose==1) print_vector_double(score,n_cov,file);
+//      if (*verbose==1) print_vector_double(score,n_cov,file);
       
       /* now start numerical differentiation */
 
@@ -843,14 +845,14 @@ void profile_NR_ind(
 	         pz[k]= pz[k]*4/pzsum;  
           }
 
-          if (*verbose==1) print_vector_double(pz,*n_subject*4,file);
+//          if (*verbose==1) print_vector_double(pz,*n_subject*4,file);
           it=0;
           dif=1;
  
           for (k=0;k<*n_subject*4;k++) pyxnew[k]=pyx[k];
           while (dif>cutoff2 && it < *maxit) {
 	     it++;
-              if (*verbose==1) fprintf(file,"\nthe EM iteration number =%i\n\n", it);
+  //            if (*verbose==1) fprintf(file,"\nthe EM iteration number =%i\n\n", it);
              for (k=0;k<*n_subject*5;k++) {
 	      if (k<*n_subject) wgt1[k]=1; 
               else  wgt1[k]=Nyx[k-*n_subject]*fit1[k-*n_subject]*pz[k-*n_subject]/pyxnew[k-*n_subject];
@@ -909,14 +911,14 @@ void profile_NR_ind(
           }
           
 	}
-          if (*verbose==1)  {
-	   print_matrix_double(ss,2,n_cov,file); }
+//          if (*verbose==1)  {
+//	   print_matrix_double(ss,2,n_cov,file); }
 
            for (j=0;j<n_cov;j++) infmat[i][j] = (ss[0][j]-ss[1][j])/(2*(*diff_factor));
       }
       /* now update beta */
-         if (*verbose==1)  {
-	   print_matrix_double(infmat,n_cov,n_cov,file); }
+//         if (*verbose==1)  {
+//	   print_matrix_double(infmat,n_cov,n_cov,file); }
       count=0; 
       for (i=0;i<n_cov;i++) {
             for (j=0;j<n_cov;j++) {
@@ -964,7 +966,7 @@ void profile_NR_ind(
 		varmat[i]=varmat1[i];
 	}
 	
-    fclose(file);
+//    fclose(file);
 }    
 
 
@@ -1075,10 +1077,10 @@ double **double_matrix(long nrow, long ncol){
 	 long i;
 	 double **m;
 	 m=(double **) Calloc(nrow, double *);
-	 if (!m) errmsg("mem alloc failure 1 in double_matrix");
+	 //if (!m) errmsg("mem alloc failure 1 in double_matrix");
 	 for (i=0;i<nrow;i++) {
 		  m[i]=(double *) Calloc(ncol,double);
-		  if (!m[i]) errmsg("mem alloc failure 2 in double_matrix");
+		  //if (!m[i]) errmsg("mem alloc failure 2 in double_matrix");
 	 }
 	 return m;
 }
@@ -1091,10 +1093,10 @@ long **long_matrix(long nrow, long ncol){
 	 long i;
 	 long **m;
 	 m=(long **) Calloc(nrow, long *);
-	 if (!m) errmsg("mem alloc failure 1 in long_matrix");
+	 //if (!m) errmsg("mem alloc failure 1 in long_matrix");
 	 for (i=0;i<nrow;i++) {
 		  m[i]=(long *) Calloc(ncol,long);
-		  if (!m[i]) errmsg("mem alloc failure 2 in long_matrix");
+		  //if (!m[i]) errmsg("mem alloc failure 2 in long_matrix");
 	 }
 	 return m;
 }
@@ -1106,14 +1108,14 @@ double *double_vec(long n){
 
 	 double *v;
 	 v=(double *) Calloc(n, double);
-	 if (!v) errmsg("mem alloc failure in double_vec");
+	 //if (!v) errmsg("mem alloc failure in double_vec");
 	 return v;
 }
 
 long *long_vec(long n){
 	 long *v;
 	 v=(long *) Calloc(n, long);
-	 if (!v) errmsg("mem alloc failure in long_vec");
+	 //if (!v) errmsg("mem alloc failure in long_vec");
 	 return v;
 }
 
@@ -1196,11 +1198,4 @@ void print_vector_long(long *m, long n, FILE *file){
 
 /***********************************************************************************/
 
-static void errmsg(char *string){
-
-  /* Function to emulate "stop" of S+ - see page 134, S Programing, by
-     Venables and Ripley */
-
-   PROBLEM "%s", string RECOVER(NULL_ENTRY);
-}
 

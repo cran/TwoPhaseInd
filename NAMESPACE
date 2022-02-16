@@ -1,4 +1,4 @@
-useDynLib(TwoPhaseInd)
+useDynLib(TwoPhaseInd, .registration = TRUE)
 importFrom("survival","cch","cluster","coxph","Surv")
 importFrom("stats", "as.formula", "binomial", "formula", "glm",
              "model.matrix", "pnorm", "quantile", "var")

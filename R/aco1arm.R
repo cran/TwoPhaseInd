@@ -1,5 +1,4 @@
-aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id, 
-          subcohort, esttype = 1, augment = 1, extra=NULL) 
+aco1arm <- function (data, svtime, event, treatment, BaselineMarker, subcohort, esttype = 1, augment = 1, extra=NULL) 
 {
   
   if (!is.data.frame(data)) {
@@ -23,9 +22,6 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
     }
     if (!(BaselineMarker %in% colNames)) {
       stop("BaselineMarker variable was not found in the data.")
-    }
-    if (!(id %in% colNames)) {
-      stop("id variable was not found in the data.")
     }
     if (!(subcohort %in% colNames)) {
       stop("Subcohort indicator variable was not found in the data.")
@@ -56,6 +52,9 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
     }
   }
 
+  #limit the data to the variables to be used
+  data <- data[,c(svtime,event,treatment,BaselineMarker,subcohort,extra)]
+  
   #Remove missing data
   dat0 <- remove_missingdata(data)$data
   #Biomarker variable should be transformed to numeric
@@ -68,8 +67,7 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
     rownames(tmpResult)[4:nrow(tmpResult)]=extra
   }else
   {
-    idx <- which(colnames(dat0) == id)
-    colnames(dat0)[idx] <- "id"
+    dat0$id <- 1:nrow(dat0)
     idx <- which(colnames(dat0) == subcohort)
     colnames(dat0)[idx] <- "subcohort"
     subcohort <- "subcohort"
@@ -87,8 +85,7 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
     fmla <- as.formula(paste0("Surv(", svtime, ",", event, ") ~ ", 
                               paste(paste(c(BaselineMarker, extra), collapse = "+"))))
     if (esttype == 1) {
-      fit3 <- cch(fmla, data = dat1, subcoh = ~subcohort, id = ~id, 
-                  cohort.size = n, method = "SelfPrentice")
+      fit3 <- cch(fmla, data = dat1, subcoh = ~subcohort, id = ~id, cohort.size = n, method = "SelfPrentice")
       dat2 <- dat1[dat1[, subcohort] == 1, ]
       xx <- dat2[, c(BaselineMarker, extra)]
       yy <- dat2[, svtime]
@@ -97,9 +94,7 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
     else {
       fit3 <- cch(fmla, data = dat1, subcoh = ~subcohort, id = ~id, 
                   cohort.size = n, method = "LinYing", robust = TRUE)
-      ww[dat1[, event] == 0] <- (n - sum(dat1[, event] == 1))/(sum(dat1[, 
-                                                                        subcohort] == 1) - sum(dat1[, subcohort] == 1 & dat1[, 
-                                                                                                                             event] == 1))
+      ww[dat1[, event] == 0] <- (n - sum(dat1[, event] == 1))/(sum(dat1[,subcohort] == 1) - sum(dat1[, subcohort] == 1 & dat1[,event] == 1))
       xx <- dat1[, c(BaselineMarker, extra)]
       yy <- dat1[, svtime]
       id.ss2 <- 1:n1
@@ -116,10 +111,8 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
       b <- 1 * (yy >= dat1[i, svtime])
       if (sum(b) > 0) {
         s0[i] <- sum(b * a)
-        s1[i, ] <- apply(matrix(b * a, nrow = n2, ncol = nx, 
-                                byrow = FALSE) * xx, 2, sum)
-        dd1[i, ] <- dat1[i, c(BaselineMarker, extra)] - s1[i, 
-                                                           ]/s0[i]
+        s1[i, ] <- apply(matrix(b * a, nrow = n2, ncol = nx, byrow = FALSE) * xx, 2, sum)
+        dd1[i, ] <- dat1[i, c(BaselineMarker, extra)] - s1[i,]/s0[i]
       }
       else {
         dd1[i, ] <- as.matrix(dat1[i, c(BaselineMarker, extra)])
@@ -130,8 +123,7 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
       tmp <- matrix(0, n1, nx)
       for (j in which(dat1[, event] == 1)) {
         tmp[j, ] <- ww[i] * (dat1[i, svtime] >= dat1[j, svtime]) * 
-          exp(dat1[i, c(BaselineMarker, extra)] %*% beta) * 
-          (dat1[i, c(BaselineMarker, extra)] - s1[j, ]/s0[j])/s0[j]
+          as.numeric(exp(dat1[i, c(BaselineMarker, extra)] %*% beta)) * (dat1[i, c(BaselineMarker, extra)] - s1[j, ]/s0[j])/s0[j]
       }
       dd2[i, ] <- apply(tmp, 2, sum)
     }
@@ -141,32 +133,52 @@ aco1arm <- function (data, svtime, event, treatment, BaselineMarker, id,
       b <- yy >= dat1[i, svtime]
       s2 <- matrix(0, nx, nx)
       for (j in which(b)) {
-        s2 <- s2 + as.matrix(a[j] * xx[j, ]) %*% t(as.matrix(xx[j, 
-                                                                ]))
+        s2 <- s2 + as.matrix(a[j] * xx[j, ]) %*% t(as.matrix(xx[j,]))
       }
-      temp <- s2/s0[i] - as.matrix(s1[i, ]) %*% t(as.matrix(s1[i, 
-                                                               ]))/(s0[i]^2)
+      temp <- s2/s0[i] - as.matrix(s1[i, ]) %*% t(as.matrix(s1[i,]))/(s0[i]^2)
       infmat <- infmat + temp
     }
     v2 <- (solve(infmat) %*% t(ss2) %*% ss2 %*% solve(infmat))
+    vmat <- matrix(0,nx+2,nx+2)
+    vmat[3:(2+nx),3:(2+nx)] <- v2
+    vmat[1:2,1:2] <- solve(bread1) %*% t(fit4$x * (fit4$y - fit4$fitted)) %*% (fit4$x * (fit4$y - fit4$fitted)) %*% solve(bread1)
+    cov1 <- solve(bread1) %*% t(fit4$x[fit4$y == augment,] * (fit4$y[fit4$y == augment] - fit4$fitted[fit4$y == augment])) %*% ss2[dat1[, event] ==1, ] %*% solve(infmat)
+    vmat[1:2,3:(2+nx)] <- cov1
+    vmat[3:(2+nx),1:2] <- t(cov1)
+    
     est.coef <- c(beta[1], b23, beta[-1])
-    est.var <- c(v2[1, 1], var23, diag(v2)[-1])
+  
     if (augment == 1) {
       est.coef[1] <- est.coef[1] - fit4$coef[2]
-      cov1 <- solve(bread1) %*% t(fit4$x[fit4$y == 1, ] * (fit4$y[fit4$y == 
-                                                                    1] - fit4$fitted[fit4$y == 1])) %*% ss2[dat1[, event] == 
-                                                                                                              1, ] %*% solve(infmat)
-      est.var[1] <- est.var[1] + summary(fit4)$coef[2, 2]^2 - 
-        cov1[2, 1] * 2
+      dmat <- matrix(0,nx+2,nx+2)
+      diag(dmat) <- 1
+      dmat[3,2] <- (-1)
+      vmat <- dmat %*% vmat %*% t(dmat)
     }
-    
+    outmat <- matrix(0,3,3)
+    outmat[2:3,2:3] <- vmat[1:2,1:2]
+    outmat[1:3,1] <- vmat[c(3,1,2),3]
+    outmat[1,1:3] <- vmat[c(3,1,2),3]
+    est.var <- diag(vmat)
+    est.var <- c(est.var[3],est.var[-3])
     pVal <- 2*(1-pnorm(abs(est.coef/sqrt(est.var))))
-    tmpResult <- data.frame(beta=round(est.coef, 4), stder=round(sqrt(est.var), 4), pVal=pVal)
+    tmpResult <- data.frame(beta=round(est.coef, 4), stder=round(sqrt(est.var), 4), pVal=round(pVal,4))
   }
-    
+  
   rownames(tmpResult)[1] <- paste(BaselineMarker, "(BaselineMarker)")
   rownames(tmpResult)[2] <- paste(treatment, "(Treatment)")
-  rownames(tmpResult)[3] <- "interatcion"
+  rownames(tmpResult)[3] <- "Marker-treatment interatcion"
   
-  return(tmpResult)
+  outmat <- data.frame(outmat)
+  
+  rownames(outmat)[1] <- BaselineMarker
+  rownames(outmat)[2] <- treatment
+  rownames(outmat)[3] <- "Interaction"
+  
+  colnames(outmat)[1] <- BaselineMarker
+  colnames(outmat)[2] <- treatment
+  colnames(outmat)[3] <- "Interaction"
+  
+  
+  return(list(Estimate=tmpResult,Covariance=outmat))
 }

@@ -16,20 +16,26 @@ caseonly(data, treatment, BaselineMarker, extra = NULL, fraction = 0.5)
 A data frame used to access the following data.
 }
   \item{treatment}{
-A character string of column name, corresponds to one column of the data frame, which is used to store the binary vector of treatment variable (1: treatment, 0: placebo). 
+A character string of column name, corresponds to one column of the data frame, which
+ is used to store the binary vector of treatment variable (1: treatment, 0: placebo). 
 }
   \item{BaselineMarker}{
-A character string of column name, corresponds to one column of the data frame, which is used to store a vector of biomarker.
+A character string of column name, corresponds to one column of the data frame, 
+which is used to store a vector of biomarker.
 }
   \item{extra}{
-A string vector of column name(s), corresponds to more or more column(s) of the data frame, which is/are used to store the extra baseline covariate(s) to be adjusted for in addition to treatment and biomarker.
+A string vector of column name(s), corresponds to more or more column(s) of the data 
+frame, which is/are used to store the extra baseline covariate(s) to be included in 
+case-only regression. Note that extra covariates are not needed unless the 
+interactions of treatment and extra coviarates are of interest.
 }
   \item{fraction}{
 The randomization fraction of active treatment assignment.
 }
 }
 \details{
-This function estimates parameters of case-only designs. It estimates two parameters for "treatment effect when baselineMarker=0"" and treatment+baselineMarker interaction".
+This function estimates parameters of case-only designs. It estimates two parameters 
+for "treatment effect when baselineMarker=0"" and treatment+baselineMarker interaction".
 }
 \value{
 For each paramter, it returns:
@@ -39,7 +45,9 @@ For each paramter, it returns:
 }
 
 \references{
-J. Y. Dai, S. S. Li, and P. B. Gilbert. Case-only methods for competing risks models with application to assessing differential vaccine efficacy by viral and host genetics. Biometrics, 15(1):196-203, 2014.
+J. Y. Dai, S. S. Li, and P. B. Gilbert. Case-only methods for competing risks models 
+with application to assessing differential vaccine efficacy by viral and host genetics. 
+Biometrics, 15(1):196-203, 2014.
 }
 
 \author{

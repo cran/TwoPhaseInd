@@ -136,7 +136,6 @@ rfit0 <- acoarm(data=acodata,  ## dataset
                  event="f_evinf",  ## event
                  treatment="f_treat", ## treatment
                  BaselineMarker="fcgr2a.3",  #biomarker
-                 id="ptid",  #participant id
                  subcohort="subcoh", #subcohort
                  esttype=1, ## use Self-Prentice method
                  augment=0, ## augment from placebo arm
@@ -148,7 +147,8 @@ rfit0 <- acoarm(data=acodata,  ## dataset
                          ,"num_male_part_cat"
                          ,"uias"
                          ,"uras")) ## extra varibles
-rfit0
+rfit0$Estimate
+rfit0$Covariance
 
 
 ###################################################
@@ -159,10 +159,10 @@ rfit1 <- acoarm(data=acodata,  ## dataset
                  event="f_evinf",  ## event
                  treatment="f_treat", ## treatment
                  BaselineMarker="fcgr2a.3",  #biomarker
-                 id="ptid",  #participant id
                  subcohort="subcoh", #subcohort
                  esttype=1, ## use Self-Prentice method
                  augment=1,## augment from active arm
+                 weight=NULL,
                  extra=c("f_agele30"
                          ,"f_hsv_2"
                          ,"f_ad5gt18"
@@ -171,7 +171,8 @@ rfit1 <- acoarm(data=acodata,  ## dataset
                          ,"num_male_part_cat"
                          ,"uias"
                          ,"uras")) ## extra varibles
-rfit1
+rfit1$Estimate
+rfit1$Covariance
 
 
 ###################################################
@@ -182,10 +183,10 @@ rfit2 <- acoarm(data=acodata,  ## dataset
                  event="f_evinf",  ## event
                  treatment="f_treat", ## treatment
                  BaselineMarker="fcgr2a.3",  #biomarker
-                 id="ptid",  #participant id
                  subcohort="subcoh", #subcohort
                  esttype=1, ## use Self-Prentice method
                  augment=2,## augment from both arms
+                 weight=NULL,
                  extra=c("f_agele30"
                          ,"f_hsv_2"
                          ,"f_ad5gt18"
@@ -198,7 +199,7 @@ rfit2
 
 
 ###################################################
-### code chunk number 13: TwoPhaseInd.Rnw:295-300
+### code chunk number 13: TwoPhaseInd.Rnw:296-301
 ###################################################
 
 cat('\\begin{figure}[h]\n')

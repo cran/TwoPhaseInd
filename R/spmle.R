@@ -200,10 +200,10 @@ spmle <- function(data,			## dataset (data.frame)
       )
     }
     
-    options(warn=-1) #remvove message:non-integer #successes in a binomial glm! 	
-    sfit <- glm(glmFormula, data=data[phase2, ], family=binomial, weights=wgt0)  
+    #*options(warn=-1) #remvove message:non-integer #successes in a binomial glm! 	
+    suppressWarnings(sfit <- glm(glmFormula, data=data[phase2, ], family=binomial, weights=wgt0))
     beta <- sfit$coef
-    options(warn=0)
+    #*options(warn=0)
     varmat <- rep(0,length(beta)^2)
     
     if(!is.null(extra)){

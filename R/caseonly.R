@@ -15,8 +15,7 @@ caseonly <- function(data,treatment,BaselineMarker,extra=NULL,fraction=0.5) {
     if (!(treatment %in% colNames)) {
       stop("Treatment variable was not found in the data.")
     }else {
-      if (any(levels(factor(data[, treatment])) != c("0", 
-                                                     "1"))) {
+      if (any(levels(factor(data[, treatment])) != c("0","1"))) {
         warning("Treatment variable must be either 0 or 1 only.")
       }
     }
@@ -25,8 +24,7 @@ caseonly <- function(data,treatment,BaselineMarker,extra=NULL,fraction=0.5) {
     }
     if (!is.null(extra)) {
       if (!any(extra %in% colNames)) {
-        extraNotFound <- paste(extra[!(extra %in% colNames)], 
-                               sep = "", collapse = ", ")
+        extraNotFound <- paste(extra[!(extra %in% colNames)],sep = "", collapse = ", ")
         stop(paste("Extra variable(s) was not found in the data:", 
                    extraNotFound))
       }
